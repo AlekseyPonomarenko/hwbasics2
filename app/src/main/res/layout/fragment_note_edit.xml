@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -8,17 +9,54 @@
     android:orientation="vertical"
     tools:context=".NoteEditFragment">
 
-    <TextView
-        android:id="@+id/details_tv_name"
-        android:layout_width="match_parent"
+    <EditText
+        android:id="@+id/details_et_name"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:text="Наименование"
-        android:textSize="@dimen/text_size_list" />
+        android:layout_marginHorizontal="@dimen/text_margin_horizontal"
+        android:layout_marginTop="@dimen/card_margin_top"
+        android:ems="10"
+        android:inputType="textPersonName"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
-    <TextView
-        android:id="@+id/details_tv_description"
-        android:layout_width="match_parent"
+    <EditText
+        android:id="@+id/details_et_description"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:text="Детали"
-        android:textSize="@dimen/text_size_list" />
-</LinearLayout>
+        android:layout_marginHorizontal="@dimen/text_margin_horizontal"
+        android:layout_marginTop="@dimen/card_margin_top"
+        android:ems="10"
+        android:gravity="start|top"
+        android:inputType="textMultiLine"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/details_et_name" />
+
+
+    <Button
+        android:id="@+id/details_bt_delete"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="@dimen/text_margin_horizontal"
+        android:layout_marginTop="@dimen/card_margin_top"
+        android:text="Удалить"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/details_et_description" />
+
+
+    <Button
+        android:id="@+id/details_bt_save"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="@dimen/text_margin_horizontal"
+        android:layout_marginTop="@dimen/card_margin_top"
+        android:text="Сохранить"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/details_bt_delete" />
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>

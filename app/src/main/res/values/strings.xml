@@ -4,4 +4,6 @@
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="caption_notes">Заметки</string>
     <string name="default_demo_text_date">10 июля 2022 г. 08:22</string>
+    <string name="ot">от</string>
+    <string name="add">Добавить</string>
 </resources>
