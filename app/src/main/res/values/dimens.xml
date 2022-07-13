@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="card_margin_horizontal">8dp</dimen>
+    <dimen name="card_margin_top">8dp</dimen>
+    <dimen name="text_margin_horizontal">8dp</dimen>
+    <dimen name="text_size_list">20sp</dimen>
+    <dimen name="text_size_second">12sp</dimen>
+    <dimen name="divider_height">1dp</dimen>
+    <dimen name="text_size_caprion_form">25sp</dimen>
+
+    <item name="alpha_value" format="float" type="dimen">0.5</item>
+</resources>
