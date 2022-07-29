@@ -7,6 +7,7 @@
     <dimen name="text_size_second">12sp</dimen>
     <dimen name="divider_height">1dp</dimen>
     <dimen name="text_size_caprion_form">25sp</dimen>
+    <dimen name="main_menu_caption_size">35sp</dimen>
 
     <item name="alpha_value" format="float" type="dimen">0.5</item>
 </resources>

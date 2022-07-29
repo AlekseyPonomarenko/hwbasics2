@@ -1,9 +1,16 @@
 <resources>
-    <string name="app_name">hwbasics2</string>
+    <string name="app_name">Мои заметки</string>
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="caption_notes">Заметки</string>
     <string name="default_demo_text_date">10 июля 2022 г. 08:22</string>
     <string name="ot">от</string>
     <string name="add">Добавить</string>
+    <string name="delete_item">Удалить</string>
+    <string name="exit">Выход</string>
+    <string name="about_program">О программе</string>
+    <string name="navigation_drawer_open">Открыть</string>
+    <string name="navigation_drawer_close">Закрыть</string>
+    <string name="save_and_close">Сохранить и закрыть</string>
+
 </resources>

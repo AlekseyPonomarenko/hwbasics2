@@ -39,9 +39,10 @@ public class MainService {
     public void generateDemoList() {
         if (!noteList.isEmpty()) {
             return;
-        };
+        }
+        ;
 
-        for (int i = 1; i<11; i++){
+        for (int i = 1; i < 5; i++) {
             noteRepo.createOrUpdate(new Note("Тема " + i, "Детальное описание темы " + i));
         }
 

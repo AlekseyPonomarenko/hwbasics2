@@ -1,15 +1,18 @@
 package ru.ponomarenko.hwbasics2;
 
+import android.app.Activity;
 import android.content.res.Configuration;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.widget.PopupMenu;
 import androidx.cardview.widget.CardView;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -48,7 +51,7 @@ public class NotesFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        ((Button) view.findViewById(R.id.btAdd)).setOnClickListener(v->{
+        ((Button) view.findViewById(R.id.btAdd)).setOnClickListener(v -> {
             showNoteEdit(new Note());
         });
 
@@ -86,7 +89,32 @@ public class NotesFragment extends Fragment {
 
             container.addView(itemView);
 
+            initPopupMenu(itemView, note);
+
         }
+    }
+
+    private void initPopupMenu(View view, Note note) {
+        view.setOnLongClickListener(v -> {
+            Activity activity = requireActivity();
+            PopupMenu popupMenu = new PopupMenu(activity, view);
+            activity.getMenuInflater().inflate(R.menu.notes_popup, popupMenu.getMenu());
+            popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+                @Override
+                public boolean onMenuItemClick(MenuItem item) {
+                    switch (item.getItemId()) {
+                        case R.id.action_popup_delete:
+
+                            MainService.getInstance().getNoteRepo().delete(note.getId());
+                            initMainList();
+                            break;
+                    }
+                    return true;
+                }
+            });
+            popupMenu.show();
+            return true;
+        });
     }
 
 
@@ -112,6 +140,7 @@ public class NotesFragment extends Fragment {
     }
 
     private void showNoteEditLand(Note item) {
+/*
 
         NoteEditFragment noteEditFragment = NoteEditFragment.newInstance(item, this);
         requireActivity().
@@ -121,9 +150,9 @@ public class NotesFragment extends Fragment {
                 .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE)
                 .commit();
 
+ */
+
     }
-
-
 
 
 }

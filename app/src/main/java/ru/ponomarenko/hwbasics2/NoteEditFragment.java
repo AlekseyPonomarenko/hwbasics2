@@ -65,7 +65,7 @@ public class NoteEditFragment extends Fragment {
             etDescription.setText(note.getDescription());
         }
 
-        btSave.setOnClickListener(v->{
+        btSave.setOnClickListener(v -> {
 
             note.setName(etName.getText().toString());
             note.setDescription(etDescription.getText().toString());
@@ -75,7 +75,7 @@ public class NoteEditFragment extends Fragment {
 
         });
 
-        btDelete.setOnClickListener(v->{
+        btDelete.setOnClickListener(v -> {
             MainService.getInstance().getNoteRepo().delete(note.getId());
             refreshList();
             closeForm();
@@ -85,30 +85,18 @@ public class NoteEditFragment extends Fragment {
     }
 
 
-    private void refreshList(){
+    private void refreshList() {
 
-        /**
-         * ЭТО НЕ РАБОТАЕТ
-
-        NotesFragment notesFragment = (NotesFragment) requireActivity().getSupportFragmentManager().getFragments().stream().filter( fragment -> fragment instanceof NotesFragment)
-                .findFirst().orElse(null);
-        notesFragment.initMainList();
-         */
-
-        if (parentForm instanceof NotesFragment){
+        if (parentForm instanceof NotesFragment) {
             ((NotesFragment) parentForm).initMainList();
         }
 
     }
 
 
-    private void closeForm(){
+    private void closeForm() {
         requireActivity().getSupportFragmentManager().popBackStack();
     }
-
-
-
-
 
 
 }
