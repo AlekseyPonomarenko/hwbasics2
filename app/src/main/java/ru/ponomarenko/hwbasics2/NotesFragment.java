@@ -140,7 +140,7 @@ public class NotesFragment extends Fragment {
     }
 
     private void showNoteEditLand(Note item) {
-/*
+
 
         NoteEditFragment noteEditFragment = NoteEditFragment.newInstance(item, this);
         requireActivity().
@@ -150,7 +150,7 @@ public class NotesFragment extends Fragment {
                 .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE)
                 .commit();
 
- */
+
 
     }
 
