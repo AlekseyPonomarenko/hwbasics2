@@ -21,10 +21,11 @@
         android:layout_marginHorizontal="@dimen/card_margin_horizontal"
         android:text="@string/add" />
 
-    <LinearLayout
-        android:id="@+id/container"
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/notes_rv"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="vertical"></LinearLayout>
+
+        />
 
 </LinearLayout>

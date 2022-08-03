@@ -23,6 +23,11 @@ public class NoteRepoImpl implements NoteRepo {
     }
 
     @Override
+    public Note getByIndex(int index) {
+        return dataList.get(index);
+    }
+
+    @Override
     public void createOrUpdate(Note note) {
 
 
