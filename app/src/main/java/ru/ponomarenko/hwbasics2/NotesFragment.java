@@ -10,6 +10,7 @@ import androidx.appcompat.widget.PopupMenu;
 import androidx.cardview.widget.CardView;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
+import androidx.recyclerview.widget.DefaultItemAnimator;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -32,7 +33,9 @@ import ru.ponomarenko.hwbasics2.service.MyPrimitivePostOperation;
 public class NotesFragment extends Fragment {
 
     LinearLayout mainLinearLayout;
-    RecyclerView recyclerView;
+    public RecyclerView recyclerView;
+    public NoteListAdapter listAdapter;
+    private static final int DURATION = 1000;
 
     public static NotesFragment newInstance() {
         NotesFragment fragment = new NotesFragment();
@@ -67,13 +70,20 @@ public class NotesFragment extends Fragment {
         recyclerView = view.findViewById(R.id.notes_rv);
         mainLinearLayout = (LinearLayout) view;
         initMainList();
+
+        MainService.getInstance().setNotesFragment(this);
     }
 
     public void initMainList() {
 
+        DefaultItemAnimator defaultItemAnimator = new DefaultItemAnimator();
+        defaultItemAnimator.setAddDuration(DURATION);
+        defaultItemAnimator.setRemoveDuration(DURATION);
+        recyclerView.setItemAnimator(defaultItemAnimator);
+
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext());
         recyclerView.setLayoutManager(linearLayoutManager);
-        NoteListAdapter listAdapter = new NoteListAdapter(new MyPrimitiveItemClick() {
+        listAdapter = new NoteListAdapter(new MyPrimitiveItemClick() {
             @Override
             public void onItemClick(View view, int position) {
                 Note note = MainService.getInstance().getNoteRepo().getByIndex(position);
@@ -84,13 +94,13 @@ public class NotesFragment extends Fragment {
                     @Override
                     public void onItemClick(View view, int position) {
                         Note note = MainService.getInstance().getNoteRepo().getByIndex(position);
-                        initPopupMenu(view, note);
+                        initPopupMenu(view, note, position);
                     }
                 });
         recyclerView.setAdapter(listAdapter);
     }
 
-    private void initPopupMenu(View view, Note note) {
+    private void initPopupMenu(View view, Note note,  int position) {
         view.setOnLongClickListener(v -> {
             Activity activity = requireActivity();
             PopupMenu popupMenu = new PopupMenu(activity, view);
@@ -98,19 +108,13 @@ public class NotesFragment extends Fragment {
             popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
                 @Override
                 public boolean onMenuItemClick(MenuItem item) {
+
                     switch (item.getItemId()) {
                         case R.id.action_popup_delete:
 
-                            //Обновление списка
-                            MyPrimitivePostOperation refreshListOperation = new MyPrimitivePostOperation() {
-                                @Override
-                                public void start() {
-                                    initMainList();
-                                }
-                            };
 
                             //Общий метод по удалению элементов
-                            MainService.getInstance().deleteNote(note, view, getContext(), refreshListOperation);
+                            MainService.getInstance().deleteNote(note, view, getContext(), null);
 
                             break;
                     }

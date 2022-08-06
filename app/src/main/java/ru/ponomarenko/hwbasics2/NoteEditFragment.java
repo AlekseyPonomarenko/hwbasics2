@@ -12,6 +12,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 
+import ru.ponomarenko.hwbasics2.adapter.NoteListAdapter;
 import ru.ponomarenko.hwbasics2.model.Note;
 import ru.ponomarenko.hwbasics2.service.MainService;
 import ru.ponomarenko.hwbasics2.service.MyPrimitivePostOperation;
@@ -24,7 +25,6 @@ public class NoteEditFragment extends Fragment {
     Note note;
     EditText etName, etDescription;
     Button btSave, btDelete;
-    Fragment parentForm;
 
     public static NoteEditFragment newInstance(Note item, Fragment parentForm) {
 
@@ -34,7 +34,6 @@ public class NoteEditFragment extends Fragment {
         fragment.setArguments(args);
         return fragment;
     }
-
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -59,6 +58,7 @@ public class NoteEditFragment extends Fragment {
         btDelete = view.findViewById(R.id.details_bt_delete);
         btSave = view.findViewById(R.id.details_bt_save);
 
+
         Bundle arguments = getArguments();
         if (arguments != null) {
             note = (Note) arguments.getParcelable(SELECTED_NOTE);
@@ -70,42 +70,40 @@ public class NoteEditFragment extends Fragment {
 
             note.setName(etName.getText().toString());
             note.setDescription(etDescription.getText().toString());
-            MainService.getInstance().getNoteRepo().createOrUpdate(note);
-            refreshList();
+
+            int position = MainService.getInstance().getNoteRepo().createOrUpdate(note);
+
+            //Всегда в конец, тк.к по задумке последний измененный специально падает в конец
+            if (MainService.getInstance().getNotesFragment() != null) {
+                NoteListAdapter listAdapter = MainService.getInstance().getNotesFragment().listAdapter;
+                listAdapter.notifyItemInserted(position);
+
+                MainService.getInstance().getNotesFragment().recyclerView.scrollToPosition(position - 1);
+                MainService.getInstance().getNotesFragment().recyclerView.smoothScrollToPosition(position - 1);
+
+            }
             closeForm();
 
         });
 
-
-
+        MainService.getInstance().getNoteRepo().getIndexById(note.getId());
 
         btDelete.setOnClickListener(v -> {
 
             //Обновление списка
-            MyPrimitivePostOperation refreshListOperation = new MyPrimitivePostOperation() {
+            MyPrimitivePostOperation notifyItemRemoved = new MyPrimitivePostOperation() {
                 @Override
                 public void start() {
-                    refreshList();
                     closeForm();
                 }
             };
 
             //Общий метод по удалению элементов
-            MainService.getInstance().deleteNote(note, view, getContext(), refreshListOperation);
+            MainService.getInstance().deleteNote(note, view, getContext(), notifyItemRemoved);
 
         });
 
     }
-
-
-    private void refreshList() {
-
-        if (parentForm instanceof NotesFragment) {
-            ((NotesFragment) parentForm).initMainList();
-        }
-
-    }
-
 
     private void closeForm() {
         requireActivity().getSupportFragmentManager().popBackStack();

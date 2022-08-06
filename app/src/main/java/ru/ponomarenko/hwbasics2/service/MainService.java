@@ -10,6 +10,7 @@ import com.google.android.material.snackbar.Snackbar;
 
 import java.util.ArrayList;
 
+import ru.ponomarenko.hwbasics2.NotesFragment;
 import ru.ponomarenko.hwbasics2.R;
 import ru.ponomarenko.hwbasics2.model.Note;
 import ru.ponomarenko.hwbasics2.repo.NoteRepo;
@@ -70,9 +71,9 @@ public class MainService {
      * @param note заметка
      * @param view контекст привязки Snackbar
      * @param view контекст вывода AlertDialog
-     * @param refreshListOperation операция для обновления списка
+     * @param notifyItemRemoved операция для обновления списка при удалении
      */
-    public void deleteNote(Note note, View view, Context context, MyPrimitivePostOperation refreshListOperation) {
+    public void deleteNote(Note note, View view, Context context, MyPrimitivePostOperation notifyItemRemoved) {
 
         //Диалог вопрос
         new AlertDialog.Builder(context)
@@ -84,28 +85,48 @@ public class MainService {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
 
+
+                        //старая позиция
+                        int position = noteRepo.getIndexById(note.getId());
+
                         //Удаляем
-                        MainService.getInstance().getNoteRepo().delete(note.getId());
+                        noteRepo.delete(note.getId());
 
                         //Вывод сообщения
                         Snackbar.make(view,  "Удалено: " + note.getName(),  Snackbar.LENGTH_SHORT)
                                 .setAction("Восстановить", view1 -> {
 
                                     //Восстанавливаем
-                                    MainService.getInstance().getNoteRepo().createOrUpdate(note);
-
-                                    //Обновляем в списке
-                                    refreshListOperation.start();
+                                    noteRepo.createOrUpdate(note);
+                                    notesFragment.listAdapter.notifyItemRemoved(noteRepo.getIndexById(note.getId()));
 
                                 })
                                 .show();
 
-                        //Обновляем список
-                        refreshListOperation.start();
+                        if (notesFragment!=null) {
+                           notesFragment.listAdapter.notifyItemRemoved(position);
+                        }
+
+
+                        //Постобработка
+                        if (notifyItemRemoved != null) {
+                            notifyItemRemoved.start();
+                        }
 
                     }
                 })
                 .setNeutralButton("Отмена", null)
                 .show();
+    }
+
+    //Для обновления списка
+    private NotesFragment notesFragment;
+
+    public NotesFragment getNotesFragment() {
+        return notesFragment;
+    }
+
+    public void setNotesFragment(NotesFragment notesFragment) {
+        this.notesFragment = notesFragment;
     }
 }

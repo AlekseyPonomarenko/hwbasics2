@@ -11,9 +11,13 @@ public interface NoteRepo {
 
     Note get(String uid);
 
+    int getIndexById(String uid);
+
     Note getByIndex(int index);
 
-    void createOrUpdate(Note note);
+
+
+    int createOrUpdate(Note note);
 
     void delete(String uid);
 

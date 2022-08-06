@@ -23,12 +23,22 @@ public class NoteRepoImpl implements NoteRepo {
     }
 
     @Override
+    public int getIndexById(String uid) {
+
+        Note note1 = dataList.stream().filter(n -> n.getId().equals(uid)).findFirst().orElse(null);
+        if (note1==null) return -1;
+        return dataList.indexOf(note1);
+
+    }
+
+
+    @Override
     public Note getByIndex(int index) {
         return dataList.get(index);
     }
 
     @Override
-    public void createOrUpdate(Note note) {
+    public int createOrUpdate(Note note) {
 
 
         Note noteOld = get(note.getId());
@@ -40,6 +50,8 @@ public class NoteRepoImpl implements NoteRepo {
             note.setUpdateDate();
             dataList.add(note);
         }
+
+        return dataList.indexOf(note);
 
     }
 
