@@ -14,6 +14,7 @@ import android.widget.EditText;
 
 import ru.ponomarenko.hwbasics2.model.Note;
 import ru.ponomarenko.hwbasics2.service.MainService;
+import ru.ponomarenko.hwbasics2.service.MyPrimitivePostOperation;
 
 
 public class NoteEditFragment extends Fragment {
@@ -75,10 +76,22 @@ public class NoteEditFragment extends Fragment {
 
         });
 
+
+
+
         btDelete.setOnClickListener(v -> {
-            MainService.getInstance().getNoteRepo().delete(note.getId());
-            refreshList();
-            closeForm();
+
+            //Обновление списка
+            MyPrimitivePostOperation refreshListOperation = new MyPrimitivePostOperation() {
+                @Override
+                public void start() {
+                    refreshList();
+                    closeForm();
+                }
+            };
+
+            //Общий метод по удалению элементов
+            MainService.getInstance().deleteNote(note, view, getContext(), refreshListOperation);
 
         });
 

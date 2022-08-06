@@ -21,6 +21,7 @@ import android.widget.TextView;
 
 import ru.ponomarenko.hwbasics2.model.Note;
 import ru.ponomarenko.hwbasics2.service.MainService;
+import ru.ponomarenko.hwbasics2.service.MyPrimitivePostOperation;
 
 public class NotesFragment extends Fragment {
 
@@ -105,8 +106,17 @@ public class NotesFragment extends Fragment {
                     switch (item.getItemId()) {
                         case R.id.action_popup_delete:
 
-                            MainService.getInstance().getNoteRepo().delete(note.getId());
-                            initMainList();
+                            //Обновление списка
+                            MyPrimitivePostOperation refreshListOperation = new MyPrimitivePostOperation() {
+                                @Override
+                                public void start() {
+                                    initMainList();
+                                }
+                            };
+
+                            //Общий метод по удалению элементов
+                            MainService.getInstance().deleteNote(note, view, getContext(), refreshListOperation);
+
                             break;
                     }
                     return true;
@@ -141,7 +151,6 @@ public class NotesFragment extends Fragment {
 
     private void showNoteEditLand(Note item) {
 
-
         NoteEditFragment noteEditFragment = NoteEditFragment.newInstance(item, this);
         requireActivity().
                 getSupportFragmentManager()
@@ -149,10 +158,8 @@ public class NotesFragment extends Fragment {
                 .replace(R.id.fragment_container_edit, noteEditFragment)
                 .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE)
                 .commit();
-
-
-
     }
+
 
 
 }
