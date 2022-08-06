@@ -9,20 +9,27 @@ import androidx.fragment.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
+import android.widget.Button;
+import android.widget.EditText;
 
 import ru.ponomarenko.hwbasics2.model.Note;
+import ru.ponomarenko.hwbasics2.service.MainService;
 
 
 public class NoteEditFragment extends Fragment {
 
-    static final String ARG_INDEX_NOTE = "indexNote";
+    static final String SELECTED_NOTE = "note";
 
-    public static NoteEditFragment newInstance(int id) {
+    Note note;
+    EditText etName, etDescription;
+    Button btSave, btDelete;
+    Fragment parentForm;
+
+    public static NoteEditFragment newInstance(Note item, Fragment parentForm) {
 
         NoteEditFragment fragment = new NoteEditFragment();
         Bundle args = new Bundle();
-        args.putInt(ARG_INDEX_NOTE, id);
+        args.putParcelable(SELECTED_NOTE, item);
         fragment.setArguments(args);
         return fragment;
     }
@@ -36,27 +43,72 @@ public class NoteEditFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+
         // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_note_edit, container, false);
+
     }
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
+        etName = view.findViewById(R.id.details_et_name);
+        etDescription = view.findViewById(R.id.details_et_description);
+        btDelete = view.findViewById(R.id.details_bt_delete);
+        btSave = view.findViewById(R.id.details_bt_save);
+
         Bundle arguments = getArguments();
         if (arguments != null) {
+            note = (Note) arguments.getParcelable(SELECTED_NOTE);
+            etName.setText(note.getName());
+            etDescription.setText(note.getDescription());
+        }
 
-            int index = arguments.getInt(ARG_INDEX_NOTE);
-            for (Note note : Note.getDemo()) {
-                if (note.getId().equals(index)) {
-                    ((TextView) view.findViewById(R.id.details_tv_name)).setText(note.getName());
-                    ((TextView) view.findViewById(R.id.details_tv_description)).setText(note.getDescription());
-                }
-            }
+        btSave.setOnClickListener(v->{
+
+            note.setName(etName.getText().toString());
+            note.setDescription(etDescription.getText().toString());
+            MainService.getInstance().getNoteRepo().createOrUpdate(note);
+            refreshList();
+            closeForm();
+
+        });
+
+        btDelete.setOnClickListener(v->{
+            MainService.getInstance().getNoteRepo().delete(note.getId());
+            refreshList();
+            closeForm();
+
+        });
+
+    }
 
 
+    private void refreshList(){
+
+        /**
+         * ЭТО НЕ РАБОТАЕТ
+
+        NotesFragment notesFragment = (NotesFragment) requireActivity().getSupportFragmentManager().getFragments().stream().filter( fragment -> fragment instanceof NotesFragment)
+                .findFirst().orElse(null);
+        notesFragment.initMainList();
+         */
+
+        if (parentForm instanceof NotesFragment){
+            ((NotesFragment) parentForm).initMainList();
         }
 
     }
+
+
+    private void closeForm(){
+        requireActivity().getSupportFragmentManager().popBackStack();
+    }
+
+
+
+
+
+
 }

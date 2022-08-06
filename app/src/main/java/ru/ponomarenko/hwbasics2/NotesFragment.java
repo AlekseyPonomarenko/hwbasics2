@@ -12,16 +12,19 @@ import androidx.fragment.app.FragmentTransaction;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import java.util.List;
-
 import ru.ponomarenko.hwbasics2.model.Note;
+import ru.ponomarenko.hwbasics2.service.MainService;
 
 public class NotesFragment extends Fragment {
 
-    public static NotesFragment newInstance(String param1, String param2) {
+
+    LinearLayout mainLinearLayout;
+
+    public static NotesFragment newInstance() {
         NotesFragment fragment = new NotesFragment();
         Bundle args = new Bundle();
         fragment.setArguments(args);
@@ -44,41 +47,61 @@ public class NotesFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        initMainList(view);
+
+        ((Button) view.findViewById(R.id.btAdd)).setOnClickListener(v->{
+            showNoteEdit(new Note());
+        });
+
+        mainLinearLayout = (LinearLayout) view;
+        initMainList();
     }
 
-    private void initMainList(View view) {
+    public void initMainList() {
 
-        LinearLayout linearLayout = (LinearLayout) view;
-        List<Note> demo = Note.getDemo();
-        for (Note note : demo) {
 
-            View itemView = getLayoutInflater().inflate(R.layout.layout_notes_item, linearLayout, false);
+        LinearLayout container = (LinearLayout) mainLinearLayout.findViewById(R.id.container);
+        container.removeAllViews();
 
-            TextView textView = (TextView) itemView.findViewById(R.id.layout_notes_item_tv_name);
-            textView.setText(note.getName());
+        for (Note note : MainService.getInstance().getNoteRepo().getData()) {
+
+            View itemView = getLayoutInflater().inflate(R.layout.layout_notes_item, container, false);
+
+            TextView tv_name = (TextView) itemView.findViewById(R.id.layout_notes_item_tv_name);
+            tv_name.setText(note.getName());
+
+            TextView tv_create_date = (TextView) itemView.findViewById(R.id.layout_notes_item_tv_create_date);
+            tv_create_date.setText(note.getCreationDate().toString());
+
+            TextView tv_update_date = (TextView) itemView.findViewById(R.id.layout_notes_item_tv_update_date);
+            if (note.getUpdateDate() == null) {
+                tv_update_date.setText("");
+            } else {
+                tv_update_date.setText(note.getUpdateDate().toString());
+            }
+
 
             ((CardView) itemView.findViewById(R.id.layout_notes_item_card)).setOnClickListener(view1 -> {
-                showNoteEdit(note.getId());
+                showNoteEdit(note);
             });
 
-            linearLayout.addView(itemView);
+            container.addView(itemView);
 
         }
     }
 
 
-    private void showNoteEdit(int index) {
+    private void showNoteEdit(Note item) {
         if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE) {
-            showNoteEditLand(index);
+            showNoteEditLand(item);
         } else {
-            showNoteEditPortrait(index);
+            showNoteEditPortrait(item);
         }
     }
 
 
-    private void showNoteEditPortrait(int index) {
-        NoteEditFragment noteEditFragment = NoteEditFragment.newInstance(index);
+    private void showNoteEditPortrait(Note item) {
+
+        NoteEditFragment noteEditFragment = NoteEditFragment.newInstance(item, this);
         requireActivity().
                 getSupportFragmentManager()
                 .beginTransaction()
@@ -88,15 +111,19 @@ public class NotesFragment extends Fragment {
                 .commit();
     }
 
-    private void showNoteEditLand(int index) {
-        NoteEditFragment noteEditFragment = NoteEditFragment.newInstance(index);
+    private void showNoteEditLand(Note item) {
+
+        NoteEditFragment noteEditFragment = NoteEditFragment.newInstance(item, this);
         requireActivity().
                 getSupportFragmentManager()
                 .beginTransaction()
                 .replace(R.id.fragment_container_edit, noteEditFragment)
                 .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE)
                 .commit();
+
     }
+
+
 
 
 }

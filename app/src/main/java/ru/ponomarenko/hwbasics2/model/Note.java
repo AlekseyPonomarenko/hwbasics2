@@ -1,25 +1,42 @@
 package ru.ponomarenko.hwbasics2.model;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 /**
  * Создайте класс данных со структурой заметок: название заметки, описание заметки, дата создания и т. п.
  * Структура заметки
  */
-public class Note {
+public class Note implements Parcelable {
 
-    private Integer id  = 0;            //Индекс записи
+    private String id = "";            //Индекс записи
     private String name = "";           //Название
     private String description = "";    //Описание
-    private String date = "";           //Дата создания, это пока строка. Позже разберемся
 
+    private LocalDateTime creationDate; //Дата создания
+    private LocalDateTime updateDate;   //Дата обновления
 
-    public Note(Integer id, String name, String description) {
-        this.id = id;
+    public Note() {
+
+        UUID uuid = UUID.randomUUID();
+        String randomUUIDString = uuid.toString();
+
+        this.id = randomUUIDString;
+        this.creationDate = LocalDateTime.now();
+
+    }
+
+    public Note(String name, String description) {
+        this();
         this.name = name;
         this.description = description;
     }
+
     public String getName() {
         return name;
     }
@@ -32,38 +49,59 @@ public class Note {
         return description;
     }
 
+    public String getId() {
+        return id;
+    }
+
+    public void setUpdateDate() {
+        this.updateDate = LocalDateTime.now();
+    }
+
+    public LocalDateTime getCreationDate() {
+        return creationDate;
+    }
+
+    public LocalDateTime getUpdateDate() {
+        return updateDate;
+    }
+
     public void setDescription(String description) {
         this.description = description;
     }
 
-    public String getDate() {
-        return date;
-    }
-
-    public Integer getId() {
-        return id;
-    }
-
-
-    public void setDate(String date) {
-        this.date = date;
+    protected Note(Parcel parcel){
+        id = parcel.readString();
+        name = parcel.readString();
+        description = parcel.readString();
+        creationDate = (LocalDateTime)parcel.readSerializable();
+        updateDate = (LocalDateTime)parcel.readSerializable();
     }
 
 
-    /**
-     * Статический демо метод, для тестового получения списка.
-     * @return
-     */
-    public static List<Note> getDemo(){
-        List<Note> array = new ArrayList<>();
-
-        array.add(new Note(1, "Тема 1", "Подробное описание темы 1"));
-        array.add(new Note(2, "Тема 2", "Подробное описание темы 2"));
-        array.add(new Note(3, "Тема 3", "Подробное описание темы 3"));
-        array.add(new Note(4, "Тема 4", "Подробное описание темы 4"));
-        array.add(new Note(5, "Тема 5", "Подробное описание темы 5"));
-
-        return array;
+    @Override
+    public int describeContents() {
+        return 0;
     }
 
+    @Override
+    public void writeToParcel(Parcel parcel, int i) {
+
+        parcel.writeString(getId());
+        parcel.writeString(getName());
+        parcel.writeString(getDescription());
+        parcel.writeSerializable(getCreationDate());
+        parcel.writeSerializable(getUpdateDate());
+
+    }
+
+    public static final Creator<Note> CREATOR = new Creator<Note>() {
+        @Override
+        public Note createFromParcel(Parcel in) {
+            return new Note(in);
+        }
+        @Override
+        public Note[] newArray(int size) {
+            return new Note[size];
+        }
+    };
 }

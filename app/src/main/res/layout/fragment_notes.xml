@@ -12,7 +12,19 @@
         android:layout_height="wrap_content"
         android:text="@string/caption_notes"
         android:textAlignment="center"
-        android:textSize="@dimen/text_size_list"
-        />
+        android:textSize="@dimen/text_size_caprion_form" />
+
+    <Button
+        android:id="@+id/btAdd"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/add"
+        android:layout_marginHorizontal="@dimen/card_margin_horizontal"/>
+
+    <LinearLayout
+        android:id="@+id/container"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"></LinearLayout>
 
 </LinearLayout>
