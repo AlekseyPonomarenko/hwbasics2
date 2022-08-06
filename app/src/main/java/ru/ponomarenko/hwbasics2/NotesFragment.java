@@ -10,23 +10,29 @@ import androidx.appcompat.widget.PopupMenu;
 import androidx.cardview.widget.CardView;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import ru.ponomarenko.hwbasics2.adapter.NoteListAdapter;
 import ru.ponomarenko.hwbasics2.model.Note;
 import ru.ponomarenko.hwbasics2.service.MainService;
+import ru.ponomarenko.hwbasics2.service.MyPrimitiveItemClick;
 import ru.ponomarenko.hwbasics2.service.MyPrimitivePostOperation;
 
 public class NotesFragment extends Fragment {
 
-
     LinearLayout mainLinearLayout;
+    RecyclerView recyclerView;
 
     public static NotesFragment newInstance() {
         NotesFragment fragment = new NotesFragment();
@@ -43,6 +49,8 @@ public class NotesFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+
+
         // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_notes, container, false);
     }
@@ -56,43 +64,30 @@ public class NotesFragment extends Fragment {
             showNoteEdit(new Note());
         });
 
+        recyclerView = view.findViewById(R.id.notes_rv);
         mainLinearLayout = (LinearLayout) view;
         initMainList();
     }
 
     public void initMainList() {
 
-
-        LinearLayout container = (LinearLayout) mainLinearLayout.findViewById(R.id.container);
-        container.removeAllViews();
-
-        for (Note note : MainService.getInstance().getNoteRepo().getData()) {
-
-            View itemView = getLayoutInflater().inflate(R.layout.layout_notes_item, container, false);
-
-            TextView tv_name = (TextView) itemView.findViewById(R.id.layout_notes_item_tv_name);
-            tv_name.setText(note.getName());
-
-            TextView tv_create_date = (TextView) itemView.findViewById(R.id.layout_notes_item_tv_create_date);
-            tv_create_date.setText(note.getCreationDate().toString());
-
-            TextView tv_update_date = (TextView) itemView.findViewById(R.id.layout_notes_item_tv_update_date);
-            if (note.getUpdateDate() == null) {
-                tv_update_date.setText("");
-            } else {
-                tv_update_date.setText(note.getUpdateDate().toString());
-            }
-
-
-            ((CardView) itemView.findViewById(R.id.layout_notes_item_card)).setOnClickListener(view1 -> {
+        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext());
+        recyclerView.setLayoutManager(linearLayoutManager);
+        NoteListAdapter listAdapter = new NoteListAdapter(new MyPrimitiveItemClick() {
+            @Override
+            public void onItemClick(View view, int position) {
+                Note note = MainService.getInstance().getNoteRepo().getByIndex(position);
                 showNoteEdit(note);
-            });
-
-            container.addView(itemView);
-
-            initPopupMenu(itemView, note);
-
-        }
+            }
+        },
+                new MyPrimitiveItemClick() {
+                    @Override
+                    public void onItemClick(View view, int position) {
+                        Note note = MainService.getInstance().getNoteRepo().getByIndex(position);
+                        initPopupMenu(view, note);
+                    }
+                });
+        recyclerView.setAdapter(listAdapter);
     }
 
     private void initPopupMenu(View view, Note note) {
@@ -159,7 +154,5 @@ public class NotesFragment extends Fragment {
                 .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE)
                 .commit();
     }
-
-
 
 }
