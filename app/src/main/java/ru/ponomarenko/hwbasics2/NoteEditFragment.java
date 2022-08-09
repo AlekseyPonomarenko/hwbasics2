@@ -78,8 +78,8 @@ public class NoteEditFragment extends Fragment {
                 NoteListAdapter listAdapter = MainService.getInstance().getNotesFragment().listAdapter;
                 listAdapter.notifyItemInserted(position);
 
-                MainService.getInstance().getNotesFragment().recyclerView.scrollToPosition(position - 1);
-                MainService.getInstance().getNotesFragment().recyclerView.smoothScrollToPosition(position - 1);
+                MainService.getInstance().getNotesFragment().recyclerView.scrollToPosition(position);
+                MainService.getInstance().getNotesFragment().recyclerView.smoothScrollToPosition(position);
 
             }
             closeForm();

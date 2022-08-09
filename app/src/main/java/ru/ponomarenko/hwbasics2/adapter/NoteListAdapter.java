@@ -19,7 +19,7 @@ import ru.ponomarenko.hwbasics2.service.MyPrimitiveItemClick;
 
 public class NoteListAdapter extends RecyclerView.Adapter<NoteListAdapter.ViewHolder> {
 
-   private MyPrimitiveItemClick itemClickListener;
+    private MyPrimitiveItemClick itemClickListener;
     private MyPrimitiveItemClick itemLongClickListener;
 
     public NoteListAdapter(MyPrimitiveItemClick itemClickListener, MyPrimitiveItemClick itemLongClickListener) {
@@ -96,9 +96,14 @@ public class NoteListAdapter extends RecyclerView.Adapter<NoteListAdapter.ViewHo
             Note item = MainService.getInstance().getNoteRepo().getData().get(position);
 
             tvName.setText(item.getName());
-            tvCreateDate.setText(item.getCreationDate().toString());
 
-            if (item.getUpdateDate() == null) {
+            if (item.getCreationDate() == null || item.getCreationDate().toLocalDate() == null) {
+                tvCreateDate.setText("");
+            } else {
+                tvCreateDate.setText(item.getCreationDate().toString());
+            }
+
+            if (item.getUpdateDate() == null || item.getUpdateDate().toLocalDate() == null) {
                 tvUpdateDate.setText("");
             } else {
                 tvUpdateDate.setText(item.getUpdateDate().toString());

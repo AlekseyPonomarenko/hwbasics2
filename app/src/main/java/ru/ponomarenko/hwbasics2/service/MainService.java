@@ -1,10 +1,14 @@
 package ru.ponomarenko.hwbasics2.service;
 
+import static android.content.Context.MODE_PRIVATE;
+
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.SharedPreferences;
 import android.view.View;
 
 import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.android.material.snackbar.Snackbar;
 
@@ -44,19 +48,21 @@ public class MainService {
     private ArrayList<Note> noteList;
 
     /**
-     * Демо генерация списка
+     * SharedPreferences
      */
-    public void generateDemoList() {
-        if (!noteList.isEmpty()) {
-            return;
-        }
-        ;
+    private SharedPreferences sharedPreferences;
+    public static final String DATA_KEY = "DATA_KEY";
 
-        for (int i = 1; i < 5; i++) {
-            noteRepo.createOrUpdate(new Note("Тема " + i, "Детальное описание темы " + i));
-        }
+    public void initSharedPreference(AppCompatActivity context) {
+        sharedPreferences = context.getPreferences(MODE_PRIVATE);
+    }
 
+    public String getStringFromSharedPreference(String key) {
+        return sharedPreferences.getString(key, null);
+    }
 
+    public void setStringToSharedPreference(String key, String value) {
+        sharedPreferences.edit().putString(key, value).apply();
     }
 
     public NoteRepo getNoteRepo() {
@@ -68,9 +74,9 @@ public class MainService {
      * Перед удалениеним  - диалог - Да/Нет
      * После удаления Snackbar с кнопкой "восстановить"
      *
-     * @param note заметка
-     * @param view контекст привязки Snackbar
-     * @param view контекст вывода AlertDialog
+     * @param note              заметка
+     * @param view              контекст привязки Snackbar
+     * @param view              контекст вывода AlertDialog
      * @param notifyItemRemoved операция для обновления списка при удалении
      */
     public void deleteNote(Note note, View view, Context context, MyPrimitivePostOperation notifyItemRemoved) {
@@ -93,7 +99,7 @@ public class MainService {
                         noteRepo.delete(note.getId());
 
                         //Вывод сообщения
-                        Snackbar.make(view,  "Удалено: " + note.getName(),  Snackbar.LENGTH_SHORT)
+                        Snackbar.make(view, "Удалено: " + note.getName(), Snackbar.LENGTH_SHORT)
                                 .setAction("Восстановить", view1 -> {
 
                                     //Восстанавливаем
@@ -103,8 +109,8 @@ public class MainService {
                                 })
                                 .show();
 
-                        if (notesFragment!=null) {
-                           notesFragment.listAdapter.notifyItemRemoved(position);
+                        if (notesFragment != null) {
+                            notesFragment.listAdapter.notifyItemRemoved(position);
                         }
 
 

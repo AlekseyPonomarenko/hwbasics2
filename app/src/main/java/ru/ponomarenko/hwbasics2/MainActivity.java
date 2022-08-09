@@ -6,23 +6,50 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.drawerlayout.widget.DrawerLayout;
 
+import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.Toast;
 
 
 import com.google.android.material.navigation.NavigationView;
+import com.google.gson.GsonBuilder;
+import com.google.gson.reflect.TypeToken;
 
+import java.lang.reflect.Type;
+import java.util.ArrayList;
+
+import ru.ponomarenko.hwbasics2.model.Note;
 import ru.ponomarenko.hwbasics2.service.MainService;
 
 public class MainActivity extends AppCompatActivity {
 
+    private SharedPreferences sharedPreferences;
+    public static final String DATA_KEY = "DATA_KEY";
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
-        //Создаем демо лист
-        MainService.getInstance().generateDemoList();
+        MainService.getInstance().initSharedPreference(this);
+        String saveData = MainService.getInstance().getStringFromSharedPreference(MainService.DATA_KEY);
+
+        if (saveData == null){
+            Toast.makeText(this, "Нет данных", Toast.LENGTH_LONG).show();
+        }
+        else{
+            try {
+                Type type = new TypeToken<ArrayList<Note>>(){}.getType();
+                ArrayList<Note> data = new GsonBuilder().create().fromJson(saveData, type);
+                MainService.getInstance().getNoteRepo().setData( data);
+            }
+            catch (Exception e){
+                Toast.makeText(this, "Ошибка загрузки данных", Toast.LENGTH_LONG).show();
+            }
+
+        }
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);

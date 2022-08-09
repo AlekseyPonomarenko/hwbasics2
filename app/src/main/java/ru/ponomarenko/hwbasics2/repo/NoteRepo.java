@@ -15,12 +15,12 @@ public interface NoteRepo {
 
     Note getByIndex(int index);
 
-
-
     int createOrUpdate(Note note);
 
     void delete(String uid);
 
     ArrayList<Note> getData();
+
+    void setData(ArrayList<Note> data);
 
 }
