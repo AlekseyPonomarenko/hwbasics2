@@ -19,13 +19,12 @@ import ru.ponomarenko.hwbasics2.service.MyPrimitiveItemClick;
 
 public class NoteListAdapter extends RecyclerView.Adapter<NoteListAdapter.ViewHolder> {
 
-    ArrayList<Note> dataSource;
-    private MyPrimitiveItemClick itemClickListener;
+   private MyPrimitiveItemClick itemClickListener;
     private MyPrimitiveItemClick itemLongClickListener;
 
     public NoteListAdapter(MyPrimitiveItemClick itemClickListener, MyPrimitiveItemClick itemLongClickListener) {
 
-        dataSource = MainService.getInstance().getNoteRepo().getData();
+
         this.itemClickListener = itemClickListener;
         this.itemLongClickListener = itemLongClickListener;
 
@@ -47,7 +46,7 @@ public class NoteListAdapter extends RecyclerView.Adapter<NoteListAdapter.ViewHo
 
     @Override
     public int getItemCount() {
-        return dataSource.size();
+        return MainService.getInstance().getNoteRepo().getData().size();
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder {
@@ -94,7 +93,7 @@ public class NoteListAdapter extends RecyclerView.Adapter<NoteListAdapter.ViewHo
          */
         public void fill(int position) {
 
-            Note item = dataSource.get(position);
+            Note item = MainService.getInstance().getNoteRepo().getData().get(position);
 
             tvName.setText(item.getName());
             tvCreateDate.setText(item.getCreationDate().toString());
